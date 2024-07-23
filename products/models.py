@@ -9,3 +9,14 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class Post(models.Model):
+    # author = models.ForeignKey("user.Profile", on_delete=models.CASCADE)
+    image = models.ImageField(null=True, blank=True)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    status = models.BooleanField()
+    
+    
+    def __str__(self):
+        return self.title
