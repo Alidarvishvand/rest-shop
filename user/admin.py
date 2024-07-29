@@ -1,26 +1,67 @@
-
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
+from .models import User
+from .models import User, Profile
 
-User = get_user_model()
 
-@admin.register(User)
-class UserAdmin(BaseUserAdmin):
+
+
+class CustomUserAdmin(UserAdmin):
+    model = User
+    list_display = ("email", "is_superuser", "is_active", "is_verified")
+    list_filter = ("email", "is_superuser", "is_active", "is_verified")
+    search_fields = ("email",)
+    ordering = ("email",)
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'address', 'date_of_birth')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        (
+            "Authentication",
+            {
+                "fields": ("email", "password"),
+            },
+        ),
+        (
+            "permissions",
+            {
+                "fields": (
+                    "is_staff",
+                    "is_active",
+                    "is_superuser",
+                    "is_verified",
+                ),
+            },
+        ),
+        (
+            "group permissions",
+            {
+                "fields": ("groups", "user_permissions"),
+            },
+        ),
+        (
+            "important date",
+            {
+                "fields": ("last_login",),
+            },
+        ),
     )
-
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'password1', 'password2', 'email', 'phone_number', 'address', 'date_of_birth'),
-        }),
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": (
+                    "email",
+                    "password1",
+                    "password2",
+                    "is_staff",
+                    "is_active",
+                    "is_superuser",
+                    "is_verified",
+                ),
+            },
+        ),
     )
 
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
-    search_fields = ('username', 'first_name', 'last_name', 'email')
-    ordering = ('username',)
+
+admin.site.register(Profile)
+
+admin.site.register(User, CustomUserAdmin)
